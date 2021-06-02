@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  mariadb:
+    container_name: mbaas02-data
+    image: mariadb:10
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - mbaas02
+    environment:
+      MYSQL_ROOT_PASSWORD: password123!
+      MYSQL_DATABASE: mbaas02
+      MYSQL_USER: mbaas02
+      MYSQL_PASSWORD: password123!
+
+  nginx:
+    container_name: mbaas02-nginx
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+    links:
+      - mariadb
+    ports:
+      - 80:80
+    networks:
+      - mbaas02
+
+volumes:
+  db_data: {}
+
+networks:
+  mbaas02:
+    driver: bridge
